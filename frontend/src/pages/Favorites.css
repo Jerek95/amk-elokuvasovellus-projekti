@@ -1,0 +1,6 @@
+#favorites {
+  display: flex;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+}

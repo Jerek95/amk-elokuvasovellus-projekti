@@ -1,0 +1,91 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from 'axios'
+import './SettingsPage.css'
+import { useAuth } from "../contexts/AuthContext.js";
+
+export default function RemoveSettings() {
+    const [removeInput, setRemoveInput] = useState('');
+    const { user, accessToken, logout } = useAuth();
+    const [isVisible, setIsVisible] = useState(false);
+    const navigate = useNavigate();
+
+    function changeSite(site) {
+
+        if (site === "user") navigate("/settings/");
+        if (site === "password") navigate("/settings/password");
+    }
+
+    async function handleRemoveButton() {
+        if(!user) return;
+        console.log("Removing user with password:|"+removeInput+"|");
+        axios.put(`${process.env.REACT_APP_API_URL}user/date/${user.id}`,
+            { password: removeInput },
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${accessToken}`
+                }
+            })
+            .then((response) => {
+                console.log(response.data);
+                navigate("/");
+                logout();
+            }).catch((error) => {
+                console.error("There was an error!", error);
+            });
+    }
+
+    return (
+        <div className="settings-container">
+
+            <div>
+  <div className="setting-box">
+    <div className="setting-buttons">
+    <h2 className="header">Settings!</h2>
+
+    <button
+      className="setting-item"
+      onClick={() => changeSite("user")}
+      type="button"
+    >
+      User information
+    </button>
+
+    <button
+      className="setting-item"
+      onClick={() => changeSite("password")}
+      type="button"
+    >
+      Change password
+    </button>
+
+    <button
+      className="setting-item"
+      type="button"
+      style={{ backgroundColor: "#ff6600", textDecoration: "underline" }}
+    >
+      Remove user
+    </button>
+    </div>
+  </div>
+</div>
+
+            <div className="setting-screen">
+                <h2>Warning!</h2>
+                <h2>This will remove your account!</h2>
+                <div className="remove-user-box">
+                    <label >Password: </label> 
+                    <input 
+                        type="password" 
+                        className="remove-user-password-input" 
+                        value={removeInput} 
+                        onChange={e => setRemoveInput(e.target.value)}>
+                    </input>
+                </div>
+                <button className="remove-user-button" onClick={() => handleRemoveButton()}>Delete</button>
+                <label style={{ display: isVisible ? "block" : "none" }}>Wrong password!</label>
+            </div>
+        </div>
+    );
+}

@@ -1,0 +1,13 @@
+import { Router } from "express";
+import { getTemplates, getTemplate, addTemplate, updateTemplate, deleteTemplate } from "../controllers/template_controller.js";
+
+
+const templateRouter = Router();
+
+templateRouter.get("/", getTemplates);
+templateRouter.get("/:id", getTemplate);
+templateRouter.post("/", addTemplate);
+templateRouter.put("/:id", updateTemplate);
+templateRouter.delete("/:id", deleteTemplate);
+
+export default templateRouter;
